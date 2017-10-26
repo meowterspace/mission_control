@@ -1,0 +1,72 @@
+<html>
+	<head>
+
+		<title>Main</title>
+
+		<style type="text/css">
+			body { 		background-color: #c4c4c4;
+								margin: 0px;
+								height: 100%;
+					 		}
+			.window { border: 1px solid #000000;
+								background-color: #ffffff;
+							}
+			.handle { background-color: #00ff00;
+								margin-top: 0em;
+							}
+			#win1 { 	width: 200px;
+								height: 400px;
+								position: relative;
+								left: 5px; /* START POSITION ◄ ▼ */
+								top: 5px;
+								clear: both;
+								z-index: 1;
+						}
+			#win2 { 	width: 400px;
+								height: 200px;
+								position: relative;
+								left: 200px; /* START POSITION ◄ ▼ */
+								top: -400px;
+								clear: both;
+								z-index: 1;
+						}
+
+		</style>
+
+		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+		<script>
+
+/* This makes #winx draggable only by handle(class .handle)
+   with a change in opacity on event and ensures most recently dragged
+   has the highest z-index  */
+		$(function() {
+			var zIndex = 1;
+
+			$("div[id*='win']").draggable({
+				handle: $(".handle"),
+				opacity: 0.8,
+				start: function(event, ui) {
+					$(this).css("z-index", ++zIndex);
+
+				}
+			});
+		});
+		</script>
+
+
+	</head>
+
+	<body>
+
+		<div id="win1" class="window">
+			<p class="handle">Window 1</p>
+			<div class="content">CONTENT</div>
+		</div>
+		<div id="win2" class="window">
+			<p class="handle">Window 2</p>
+			<div class="content">CONTENT</div>
+		</div>
+
+
+	</body>
