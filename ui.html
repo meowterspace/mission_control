@@ -3,43 +3,47 @@
 
 		<title>Main</title>
 
+		<!-- INCLUDE THE JQUERY LIBRARIES VIA CDN -->
+		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
 		<style type="text/css">
-			body { 		background-color: #c4c4c4;
+					body { 		background-color: #c4c4c4;
 								margin: 0px;
 								height: 100%;
-					 		}
+							}
 			.window { border: 1px solid #000000;
 								background-color: #ffffff;
 							}
 			.handle { background-color: #00ff00;
 								margin-top: 0em;
 							}
-			#win1 { 	width: 200px;
+				#win1 { 	width: 200px;
 								height: 400px;
 								position: relative;
 								left: 5px; /* START POSITION ◄ ▼ */
 								top: 5px;
 								clear: both;
 								z-index: 1;
+								display: none;
 						}
-			#win2 { 	width: 400px;
+				#win2 { 	width: 400px;
 								height: 200px;
 								position: relative;
 								left: 200px; /* START POSITION ◄ ▼ */
 								top: -400px;
 								clear: both;
 								z-index: 1;
+								display: none;
 						}
 
 		</style>
 
-		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 		<script>
 
-/* This makes #winx draggable only by handle(class .handle)
-   with a change in opacity on event and ensures most recently dragged
-   has the highest z-index  */
+		/* This makes #winx draggable only by handle(class .handle)
+		with a change in opacity on event and ensures most recently dragged
+		has the highest z-index  */
 		$(function() {
 			var zIndex = 1;
 
@@ -54,6 +58,17 @@
 		});
 		</script>
 
+		<script>
+
+		// Function to make the window visable on event
+
+		function showModal(id) {
+			console.log(id);
+			var win = document.getElementById(id);
+			$(win).show();
+		};
+
+		</script>
 
 	</head>
 
@@ -68,5 +83,7 @@
 			<div class="content">CONTENT</div>
 		</div>
 
+		<button onclick="showModal('win1');">Window 1</button>
+		<button onclick="showModal('win2');">Window 2</button>
 
 	</body>
