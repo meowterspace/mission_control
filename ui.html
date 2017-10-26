@@ -6,39 +6,29 @@
 		<!-- INCLUDE THE JQUERY LIBRARIES VIA CDN -->
 		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
-		
+		<!-- INCLUDE THE BOOTSTRAP LIBRARIES VIA CDN -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
 		<style type="text/css">
-					body { 		background-color: #c4c4c4;
-								margin: 0px;
-								height: 100%;
-							}
-			.window { border: 1px solid #000000;
-								background-color: #ffffff;
-							}
-			.handle { background-color: #00ff00;
-								margin-top: 0em;
-							}
-				#win1 { 	width: 200px;
-								height: 400px;
-								position: relative;
-								left: 5px; /* START POSITION ◄ ▼ */
-								top: 5px;
-								clear: both;
-								z-index: 1;
-								display: none;
-						}
-				#win2 { 	width: 400px;
-								height: 200px;
-								position: relative;
-								left: 200px; /* START POSITION ◄ ▼ */
-								top: -400px;
-								clear: both;
-								z-index: 1;
-								display: none;
-						}
+				body {
+					background-color: #c4c4c4;
+					margin: 0px;
+					height: 100%;
+				}
+				#win1 {
+					width: 200px;
+					height: 400px;
+				}
+				#win2 {
+					width: 400px;
+					height: 200px;
+				}
+				.panel {
+					position: absolute;
+					clear: both;
+					display: none;
+				}
 
 		</style>
 
@@ -47,8 +37,8 @@
 		/* This makes #winx draggable only by handle(class .handle)
 		with a change in opacity on event and ensures most recently dragged
 		has the highest z-index  */
+		var zIndex = 1;
 		$(function() {
-			var zIndex = 1;
 
 			$("div[id*='win']").draggable({
 				handle: $(".handle"),
@@ -59,15 +49,13 @@
 				}
 			});
 		});
-		</script>
 
-		<script>
-
-
-		//var span = document.getElementsByClassName("close")[0];
-
+		/* Function for changing css attribute display to true.
+		   On show increases z-index to be the highest of all windows
+			 to prevent displacement */
 		function showModal(id) {
 			var win = document.getElementById(id);
+			$(win).css("z-index", ++zIndex);
 			$(win).show();
 		};
 
@@ -77,16 +65,28 @@
 
 	<body>
 
-		<div id="win1" class="panel panel-default">
-			<p class="handle panel-heading">Window 1</p>
-			<div class="panel-body">CONTENT</div>
+		<nav class="navbar navbar-default">
+			<div class="container-fluid">
+				<ul class="nav navbar-nav">
+					<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Telemetry<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="javascript:showModal('win1')">T1</a></li>
+						<li><a href="javascript:showModal('win2')">T2</a></li>
+						<li><a href="#">T3</a></li>
+					</ul>
+				</li>
+			</ul>
 		</div>
-		<div id="win2" class="panel panel-default">
-			<p class="handle panel-heading">Window 2</p>
-			<div class="panel-body">CONTENT</div>
-		</div>
+	</nav>
 
-		<button class="btn btn-danger" onclick="showModal('win1');">Window 1</button>
-		<button class="btn btn-danger" onclick="showModal('win2');">Window 2</button>
+	<div id="win1" class="col-3 panel panel-default">
+		<p class="handle panel-heading">Window 1</p>
+		<div class="panel-body">CONTENT</div>
+	</div>
 
-	</body>
+	<div id="win2" class="col-2 panel panel-default">
+		<p class="handle panel-heading">Window 2</p>
+		<div class="panel-body">CONTENT</div>
+	</div>
+
+</body>
