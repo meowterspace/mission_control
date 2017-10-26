@@ -7,6 +7,9 @@
 		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
+		
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
 		<style type="text/css">
 					body { 		background-color: #c4c4c4;
 								margin: 0px;
@@ -60,10 +63,10 @@
 
 		<script>
 
-		// Function to make the window visable on event
+
+		//var span = document.getElementsByClassName("close")[0];
 
 		function showModal(id) {
-			console.log(id);
 			var win = document.getElementById(id);
 			$(win).show();
 		};
@@ -74,16 +77,16 @@
 
 	<body>
 
-		<div id="win1" class="window">
-			<p class="handle">Window 1</p>
-			<div class="content">CONTENT</div>
+		<div id="win1" class="panel panel-default">
+			<p class="handle panel-heading">Window 1</p>
+			<div class="panel-body">CONTENT</div>
 		</div>
-		<div id="win2" class="window">
-			<p class="handle">Window 2</p>
-			<div class="content">CONTENT</div>
+		<div id="win2" class="panel panel-default">
+			<p class="handle panel-heading">Window 2</p>
+			<div class="panel-body">CONTENT</div>
 		</div>
 
-		<button onclick="showModal('win1');">Window 1</button>
-		<button onclick="showModal('win2');">Window 2</button>
+		<button class="btn btn-danger" onclick="showModal('win1');">Window 1</button>
+		<button class="btn btn-danger" onclick="showModal('win2');">Window 2</button>
 
 	</body>
