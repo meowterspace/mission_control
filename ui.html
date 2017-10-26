@@ -59,6 +59,12 @@
 			$(win).show();
 		};
 
+		/* Function for hiding the modal */
+		function hideModal(id) {
+			var win = document.getElementById(id);
+			$(win).hide();
+		}
+
 		</script>
 
 	</head>
@@ -80,12 +86,20 @@
 	</nav>
 
 	<div id="win1" class="col-3 panel panel-default">
-		<p class="handle panel-heading">Window 1</p>
+		<div class="handle panel-heading">Window 1
+			<button type="button" class="close" aria-label="Close" onclick="hideModal('win1')">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		</div>
 		<div class="panel-body">CONTENT</div>
 	</div>
 
 	<div id="win2" class="col-2 panel panel-default">
-		<p class="handle panel-heading">Window 2</p>
+		<div class="handle panel-heading">Window 2
+			<button type="button" class="close" aria-label="Close" onclick="hideModal('win2')">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+		</div>
 		<div class="panel-body">CONTENT</div>
 	</div>
 
