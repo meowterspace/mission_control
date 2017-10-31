@@ -8,20 +8,16 @@ app.config['SECRET_KEY'] = 'secret'
 socketio = SocketIO(app)
 
 
-def bg_emit(count):
-	send(count)	
-
+count = 0
 @socketio.on('message')
 def handle_message(message):
 	print(message)
-	
-	for i in range(10):
-		bg_emit(i)
-		print(i)
-		time.sleep(1)
+	count += 1
+	send(count)
 
 
 if __name__ == '__main__':
 	socketio.run(app)
+
 
 
