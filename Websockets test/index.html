@@ -15,8 +15,10 @@ $(document).ready(function() {
   });
   
   socket.on('message', function(msg) {
-    document.getElementById("time").innerHTML = msg;
-    socket.send(msg+' recieved')
+
+  	document.getElementById('time').innerHTML = 'Time ('+msg.zone+'): '+msg.time;
+  	document.getElementById('serv').innerHTML = 'Server runtime: '+msg.serv;
+    socket.send(msg+' recieved');
     console.log(msg);
   });
  
@@ -24,6 +26,7 @@ $(document).ready(function() {
 
 });
 </script>
-<h1>Time: <h1><h1 id="time"></h1>
+<h1 id="time"></h1>
+<h1 id="serv"></h1>
 </body>
 </html>
