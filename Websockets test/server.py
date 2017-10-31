@@ -1,4 +1,5 @@
 import time
+import datetime
 from flask import Flask
 from flask_socketio import SocketIO, emit, send
 from threading import Thread
@@ -8,16 +9,12 @@ app.config['SECRET_KEY'] = 'secret'
 socketio = SocketIO(app)
 
 
-count = 0
 @socketio.on('message')
 def handle_message(message):
 	print(message)
-	count += 1
-	send(count)
+	x = str(datetime.datetime.now())
+	send(x)
 
 
 if __name__ == '__main__':
 	socketio.run(app)
-
-
-
