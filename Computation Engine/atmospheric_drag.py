@@ -1,8 +1,9 @@
 
 # /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
 
-def drag(P, R, T, Vg, Cd, A)            # P = Pressure, T = temp(k), Vg = flow velocity of gas
-    F = 0.5( (P/(R*T))*(Vg**2)*Cd*A )   # Cd = Coefficient of drag, A = area in drag
+def drag(P, T, Vg, Cd, A):  # P = Pressure /PA, T = temp(k), Vg = flow velocity of gas
+
+    F = 0.5 * ((P / (286 * T)) * (Vg ** 2) * Cd * A)  # Cd = Coefficient of drag, A = area in drag
     return F
 
 # /-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/-/
