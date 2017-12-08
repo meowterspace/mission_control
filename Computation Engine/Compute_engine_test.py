@@ -1,6 +1,12 @@
 
 # coding: utf-8
 
+# In[5]:
+
+
+
+# coding: utf-8
+
 # In[1]:
 
 import numpy as np
@@ -14,9 +20,10 @@ def drag(P, T, Vg, Cd, A):  # P = Pressure /PA, T = temp(k), Vg = flow velocity 
     return F
 
 
-def gravity(M, m, r):  # P = Pressure, T = temp(k), Vg = flow velocity of gas
-    F = (6.67408e-11 * M * m) / (r ** 2)  # Cd = Coefficient of drag, A = area in drag
-    return F
+def gravity(M, m, r):
+	
+	F = (6.67408e-11 * M * m) / (r**2)
+	return F
 
 
 def thrust(q, Ve, Pe, Pa, Ae):  # q = rate of ejected mass flow, Ve = exhaust gas ejection speed
@@ -30,16 +37,20 @@ class rocket:
     def __init__(self):
         mass = length = radius = F = None
         pos = angle = S = U = V = a = [None, None, None]
-        
+                
     def get_home_radius(self):
         radius = np.sqrt((self.pos[0]**2)+(self.pos[1]**2)+(self.pos[2]**2))
         return radius
     
     def get_grav_vector(self, obj):
-        Fgrav = gravity(obj.mass, self.mass, self.get_home_radius)
-        Fgravx = Fgrav*(np.sqrt((selfpos[0]**2)/(self.get_home_radius**2)))
-        Fgravy = Fgrav*(np.sqrt((selfpos[1]**2)/(self.get_home_radius**2)))
-        Fgravz = Fgrav*(np.sqrt((selfpos[2]**2)/(self.get_home_radius**2)))
+        Fgrav = gravity(obj.mass, self.mass, self.get_home_radius())
+        #Fgravx = Fgrav*(np.sqrt((self.pos[0]**2)/(self.get_home_radius()**2)))
+        #Fgravy = Fgrav*(np.sqrt((self.pos[1]**2)/(self.get_home_radius()**2)))
+        #Fgravz = Fgrav*(np.sqrt((self.pos[2]**2)/(self.get_home_radius()**2)))
+        Fgravx = self.pos[0]/self.get_home_radius()*Fgrav
+        Fgravy = self.pos[1]/self.get_home_radius()*Fgrav
+        Fgravz = self.pos[2]/self.get_home_radius()*Fgrav
+        #if Fgravx**2+Fgravy**2+Fgravz**2 != Fgrav**2: print("BAD")
         return [Fgravx, Fgravy, Fgravz]
     
     def resolve_thrust(self): # yaw, pitch, roll -> x, y, z
@@ -51,7 +62,7 @@ class rocket:
 class planet:
     class atmosphere:
         def __init__(self):
-        
+        	pass
         def atmos_pressure(P0, Mm, T, h):  # P0 = Pressure at sea Level
             P = P0 * np.exp((-1 * (Mm * 9.807) / (8.3145 * T)) * h)
             return P
@@ -77,6 +88,8 @@ from mpl_toolkits.mplot3d import Axes3D
 fig = plt.figure()
 ax = plt.axes(projection='3d')
 
+# ---- SIM > Rocket moving through atmosphere
+"""
 saturnv.F = 500
 saturnv.pos = [0, 6371e3, 0]
 saturnv.angle = [0, 90, 0]
@@ -87,7 +100,7 @@ z = []
 for i in range(10):
     F = saturnv.resolve_thrust()
     saturnv.pos[0] = saturnv.pos[0] + F[0]
-    print
+    print                                     #Something meant to go here?
     saturnv.pos[1] = saturnv.pos[1] + F[1]
     saturnv.pos[2] = saturnv.pos[2] + F[2]
     x.append(saturnv.pos[0])
@@ -102,9 +115,51 @@ ax.set_xlabel('X axis')
 ax.set_ylabel('Y axis')
 ax.set_zlabel('Z axis')
 plt.show()
-
+"""
 
 # In[ ]:
+# ---- SIM > Orbit (hopefully)
+saturnv.mass = 500
+saturnv.a = [0, 0, 0]
+saturnv.F = 0
+saturnv.pos = [0, 6779e3, 0] # 408km above Earth's surface
+saturnv.V = [7800, 0, 0]
+
+
+print("{{{a = "+str(type(saturnv.a).__name__)+"}}}")
+print("{{{"+str(type(saturnv.V).__name__)+"}}}")
+#print("{{{"+str(type(F).__name__)+"}}}")
+
+DATA = []
+bob = []
+
+
+for j in range(100000):  #issue[372] increase &  see object flyyyyyyy into deep space
+	F = gravity(Earth.mass, saturnv.mass, saturnv.get_home_radius())
+	F = saturnv.get_grav_vector(Earth)
+	F = [-F[0],-F[1],-F[2]]
+	for i in range(3):
+		saturnv.a[i] = (F[i] / saturnv.mass)
+		saturnv.V[i] = saturnv.V[i] + saturnv.a[i]*0.1 # 0.1 = tick
+		saturnv.pos[i] = saturnv.pos[i] + saturnv.V[i]*0.1
+	x = saturnv.pos
+	DATA.append([x[0], x[1], x[2]])
+
+
+
+DATA = np.array(DATA)
+DATA = np.transpose(DATA)
+print('-------------------------')
+print(DATA)
+ax.plot(DATA[0], DATA[1], DATA[2], '-b')
+ax.set_xlabel('X axis')
+ax.set_ylabel('Y axis')
+ax.set_zlabel('Z axis')
+plt.show()
+
+plt.plot(DATA[0], DATA[1], '-b')
+plt.show()
+
 
 
 
