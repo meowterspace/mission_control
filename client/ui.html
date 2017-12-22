@@ -2,13 +2,16 @@
 	<head>
 
 		<title>Main</title>
-
+		<!-- INCLUDE THE SOCKETIO LIBS VIA CDN -->
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
 		<!-- INCLUDE THE JQUERY LIBRARIES VIA CDN -->
 		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
 		<!-- INCLUDE THE BOOTSTRAP LIBRARIES VIA CDN -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
 
 		<style type="text/css">
 				body {
@@ -74,6 +77,30 @@
 	</head>
 
 	<body>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  var socket = io.connect('http://127.0.0.1:5000');
+  
+  socket.on('connect', function() {
+    socket.send('User has connected!');
+  });
+  
+  socket.on('message', function(msg) {
+  	
+  	// UPDATE PAGE DATA HERE
+
+  	//document.getElementById('time').innerHTML = 'Time ('+msg.zone+'): '+msg.time;
+  	document.getElementById('serv').innerHTML = msg.serv;
+    
+    socket.send(msg.uuid);
+    console.log(msg.uuid);
+  });
+ 
+});
+</script>
+
+
 		<nav class="navbar navbar-default">
 			<div class="container-fluid">
 				<ul class="nav navbar-nav">
@@ -85,6 +112,9 @@
 					</ul>
 				</li>
 			</ul>
+			<div style="top:5px; float:right; position: relative;">
+				<span id='serv' style="font-weight:bold; font-size:25px;">OFFINE</span>
+			</div>
 		</div>
 	</nav>
 	<div id="win1" class="col-3 panel panel-default">
