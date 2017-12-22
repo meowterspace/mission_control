@@ -1,9 +1,17 @@
 
-# coding: utf-8
+import numpy as np
+
+
 
 # In[5]:
 
-
+def distance(base, obj):
+    d = [None, None, None]
+    d[0] = base.pos[0]-obj.pos[0]
+    d[1] = base.pos[1]-obj.pos[1]
+    d[2] = base.pos[2]-obj.pos[2]
+    r = np.sqrt((d[0]**2)+(d[1]**2)+(d[2]**2))
+    return r
 
 # coding: utf-8
 
@@ -67,15 +75,16 @@ class planet:
             P = P0 * np.exp((-1 * (Mm * 9.807) / (8.3145 * T)) * h)
             return P
     
-    def __init__(self, mass, radius, p0, molMass):
-        self.mass, self.radius, self.p0, self.molMass = (mass, radius, p0, molMass)
+    def __init__(self, mass, radius, p0, molMass, pos):
+        self.mass, self.radius, self.p0, self.molMass, self.pos = (mass, radius, p0, molMass, pos)
         atmosphere = self.atmosphere()
+        
 
 
 # In[12]:
 
 objects = []
-Earth = planet(5.972e24, 6371e3, 101325, 0.02896)
+Earth = planet(5.972e24, 6371e3, 101325, 0.02896, [0, 0, 0])
 objects.append(Earth)
 
 saturnv = rocket()
@@ -161,5 +170,5 @@ plt.plot(DATA[0], DATA[1], '-b')
 plt.show()
 
 
-
+print(distance(saturnv, Earth))
 
