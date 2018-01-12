@@ -11,8 +11,8 @@
 		<!-- INCLUDE THE BOOTSTRAP LIBRARIES VIA CDN -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-
-
+		<script src="resources/js/three.min.js"></script>
+		<script src='resources/js/navball.js'></script>
 		<style type="text/css">
 				body {
 					background-color: #c4c4c4;
@@ -23,17 +23,27 @@
 					width: 200px;
 					height: 400px;
 				}
-				#win2 {
+				#win-FDAI {
 					width: 400px;
-					height: 200px;
+					height: 400px;
+					margin: 0;
 				}
 				.panel {
 					position: absolute;
 					clear: both;
 					display: none;
 				}
+				#canvas {
+					width: 100%;
+					height: 100%;
+					
+				}
 
 		</style>
+		
+		<script>
+			var FDAI_rendered = 0;
+		</script>
 
 		<script>
 
@@ -63,6 +73,10 @@
 			var win = document.getElementById(id);
 			$(win).css("z-index", ++zIndex);
 			$(win).show();
+			if (id=='win-fdai' && FDAI_rendered == 0) {
+				render_navball();
+				FDAI_rendered = 1;
+			}
 		};
 
 		/* Function for hiding the modal */
@@ -92,7 +106,7 @@ $(document).ready(function() {
 
   	//document.getElementById('time').innerHTML = 'Time ('+msg.zone+'): '+msg.time;
   	document.getElementById('serv').innerHTML = msg.serv;
-    
+    cube.rotation.x = msg.angle[0];
     socket.send(msg.uuid);
     console.log(msg.uuid);
   });
@@ -107,7 +121,7 @@ $(document).ready(function() {
 					<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Telemetry<span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li><a href="javascript:showModal('win1')">T1</a></li>
-						<li><a href="javascript:showModal('win2')">T2</a></li>
+						<li><a href="javascript:showModal('win-fdai')">FDAI</a></li>
 						<li><a href="#">T3</a></li>
 					</ul>
 				</li>
@@ -126,12 +140,12 @@ $(document).ready(function() {
 		<div class="panel-body">CONTENT</div>
 	</div>
 
-	<div id="win2" class="col-2 panel panel-danger">
-		<div class="handle panel-heading">Window 2
-			<button type="button" class="close" aria-label="Close" onclick="hideModal('win2')">
+	<div id="win-fdai" class="col-2 panel panel-danger">
+		<div class="handle panel-heading">FDAI
+			<button type="button" class="close" aria-label="Close" onclick="hideModal('win-fdai')">
 			<span aria-hidden="true">&times;</span>
 			</button>
 		</div>
-		<div class="panel-body">CONTENT</div>
+		<div class="panel-body"><div id='canvas'></div></div>
 	</div>
 </body>
