@@ -1,0 +1,52 @@
+<head>
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+$(document).ready(function() {
+  var lobby = io.connect('http://127.0.0.1:5000/lobbu');
+
+
+  lobby.on('connect', function() {
+    lobby.send('hi');
+
+
+  });
+
+  lobby.on('message', function(msg) {
+  	if (String(msg.ACTIVE) == 'true') {
+  		window.location.replace("http://127.0.0.1:5000/ui.html");
+  	};
+
+  	var user_table = '<table style="border: 1px solid #000000">';
+  	for (var i=1; i <= msg.USER_LIST.length; i++) {
+  		user_table = user_table + '<tr><td>'+msg.USER_LIST[i-1]+'</td></tr>';
+  	};
+  	user_table = user_table + '</table>';
+    document.getElementById('party').innerHTML = user_table;
+    lobby.send('hi');
+
+    var settings_table = `<table style="border: 1px solid #000000">
+    <tr><td>Game Name</td><td>`+String(msg.GAME_NAME)+`</td></tr>
+    <tr><td>Description</td><td>`+String(msg.DESCRIPTION)+`</td></tr>
+    <tr><td>Difficulty</td><td>`+String(msg.DIFFICULTY)+`</td></tr>
+    <tr><td>Online mode</td><td>`+String(msg.ONLINE_MODE)+`</td></tr>
+    <tr><td>White list</td><td>`+String(msg.WHITE_LIST)+`</td></tr>
+    <tr><td>Cheats</td><td>`+String(msg.CHEATS)+`</td></tr>
+    <tr><td>Max game length</td><td>`+String(msg.MAX_GAME_LENGTH)+`</td></tr>
+    <tr><td>Scinario</td><td>`+String(msg.SCINARIO)+`</td></tr>
+    <tr><td>Active</td><td>`+String(msg.ACTIVE)+`</td></tr>
+
+    `;
+
+
+    document.getElementById('settings').innerHTML = settings_table;
+  });
+});
+</script>
+<div style="float:left" id='settings'></div>
+<div style="float:left; padding-left:10px" id='party'></div>
+
+</body>
