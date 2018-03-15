@@ -33,6 +33,17 @@ def gravity(M, m, r):
 	F = (6.67408e-11 * M * m) / (r**2)
 	return F
 
+def is_orbit(v, r, m, h):
+    y = (v[0]*v[1]+v[1]*r[1]+v[2]+r[2])
+    y = y / (np.sqrt((v[0]**2)+(v[1]**2)+(v[2]**2))+np.sqrt((r[0]**2)+(r[1]**2)+(r[2]**2)))
+
+    v = np.sqrt((v[0]**2)+(v[1]**2)+(v[2]**2))
+    r = np.sqrt((r[0]**2)+(r[1]**2)+(r[2]**2))
+	
+    p = ((6.67408e-11*m - np.sqrt((6.67408e-11**2)*(m**2)-(v**2)*(r**2)*(((2*6.67408e-11*m)/r)-(v**2))*(1-(np.cos(y))**2)))/(2*6.67408e-11*m-(v**2))) * r
+    print(p)
+    if (p > h): return True
+    else: return False
 
 def thrust(q, Ve, Pe, Pa, Ae):  # q = rate of ejected mass flow, Ve = exhaust gas ejection speed
     F = q * Ve + (Pe - Pa) * Ae  # Pe = pressure of exhaust gasses, Pa = pressure of ambient atmosphere
@@ -171,4 +182,7 @@ plt.show()
 
 
 print(distance(saturnv, Earth))
+print('___orbit___')
+print(is_orbit(saturnv.V, saturnv.pos, 5.972e24, 100000))
+
 
