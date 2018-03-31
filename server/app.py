@@ -7,6 +7,7 @@ import errno
 from flask import Flask, render_template, send_file, request, session, redirect, render_template_string
 from flask_socketio import SocketIO, emit, send
 from threading import Thread
+import resources
 
 header = '''
 <head>
@@ -119,12 +120,11 @@ for i in app.config: print(i, app.config[i])
 socketio = SocketIO(app)
 
 
-data = {
+meta = {
   'time' : '',    #current Time
   'zone' : 'GMT', #timezone
   'serv' : '',    #time the server's been active
-  'uuid' : '',    #unique message id
-  'angle' : [0,0,0]
+  'uuid' : ''    #unique message id
 }
 
 start = datetime.datetime.now()
@@ -180,14 +180,17 @@ def route(path):
 @socketio.on('message')
 def handle_message(message):
 
-  if message == str(data['uuid']): print(message)
+  if message == str(meta['uuid']): print(message)
   else: print('Packet Loss!')
 
-  data['time'] = str(datetime.datetime.now())
-  data['serv'] = str(datetime.datetime.now()-start)
-  data['uuid'] = str(uuid.uuid4())
-  data['angle'][0] = data['angle'][0]+0.01
-  send(data)
+  meta['time'] = str(datetime.datetime.now())
+  meta['serv'] = str(datetime.datetime.now()-start)
+  meta['uuid'] = str(uuid.uuid4())
+
+  to_send = {}
+  to_send.update(meta)
+  to_send.update(resources.data)
+  send(to_send)
 
 
 @socketio.on('message', namespace='/lobbu')
