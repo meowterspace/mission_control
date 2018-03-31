@@ -90,7 +90,6 @@ GAME = {
 }
 
 users = []
-
 class User:
   def __init__(self, name):
     self.name = name
@@ -128,6 +127,9 @@ meta = {
 }
 
 start = datetime.datetime.now()
+
+#================== RUN =================================
+player = resources.setup()
 
 #================== APP ROUTES - FLASK =================================
 
@@ -177,8 +179,13 @@ def route(path):
 
 #================== APP ROUTES - SOCKETIO ==============================
 
+
 @socketio.on('message')
 def handle_message(message):
+  print('setup')
+  for i in resources.OBJECTS:
+    if (i[1] == 'planet'):
+      resources.run(i[0], player, 0.1)
 
   if message == str(meta['uuid']): print(message)
   else: print('Packet Loss!')
@@ -192,6 +199,9 @@ def handle_message(message):
   to_send.update(resources.data)
   send(to_send)
 
+@socketio.on('message', namespace='/edit_data')
+def handle_incoming_data(message):
+  print('Incoming Data: '+message)
 
 @socketio.on('message', namespace='/lobbu')
 def handle_lobby_message(message):
