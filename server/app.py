@@ -182,13 +182,12 @@ def route(path):
 
 @socketio.on('message')
 def handle_message(message):
-  print('setup')
   for i in resources.OBJECTS:
     if (i[1] == 'planet'):
       resources.run(i[0], player, 0.1)
 
-  if message == str(meta['uuid']): print(message)
-  else: print('Packet Loss!')
+  #if message != str(meta['uuid']): #print(message)
+  #  print('Packet Loss!')
 
   meta['time'] = str(datetime.datetime.now())
   meta['serv'] = str(datetime.datetime.now()-start)
@@ -199,9 +198,13 @@ def handle_message(message):
   to_send.update(resources.data)
   send(to_send)
 
-@socketio.on('message', namespace='/edit_data')
+@socketio.on('message', namespace='/update')
 def handle_incoming_data(message):
-  print('Incoming Data: '+message)
+  send(resources.data)
+  print('Incoming Data: '+str(message))
+  resources.update(player, message)
+  print(resources.data)
+  print('Data updated')
 
 @socketio.on('message', namespace='/lobbu')
 def handle_lobby_message(message):

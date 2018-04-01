@@ -88,6 +88,7 @@ class Rocket(GameObject):
         self.length, self.F, self.angle = length, F, angle
         self.q, self.Ve, self.Pe, self.Ae = q, Ve, Pe, Ae
         self.Cd, self.Vg, self.fuel = Cd, Vg, Fuel
+        self.thm = 0;
     def resolve_thrust(self): # yaw, pitch, roll -> x, y, z
         x = self.F*(np.cos(self.angle[0])*np.cos(self.angle[1]))
         y = self.F*(np.sin(self.angle[1]))
@@ -138,10 +139,10 @@ def setup():
 def run(planet, player, response_t):
     global OBJECTS
     global data
-    print(player.pos)
+    #print(player.pos)
     F = [0, 0, 0]
     player.F = [0, 0, 0]
-    player.F = player.thrust(planet)
+    player.F = player.thrust(planet)*player.thm
     F = player.resolve_thrust()
     for i in OBJECTS:
         if i[1] == 'planet':
@@ -157,28 +158,30 @@ def run(planet, player, response_t):
     s = [(u[0]*response_t) + (0.5*player.a[0]*(response_t**2)), (u[1]*response_t) + (0.5*player.a[1]*(response_t**2)), (u[2]*response_t) + (0.5*player.a[2]*(response_t**2))]
     player.pos = [player.pos[0]+s[0], player.pos[1]+s[1], player.pos[2]+s[2]]
     
-    print('a = '+str(player.a))
-    print('v = '+str(player.V))
-    print('x = '+str(player.pos[0]))
-    print('y = '+str(player.pos[1]))
-    print('z = '+str(player.pos[2]))
+    #print('F = '+str(player.F))
+    #print('a = '+str(player.a))
+    #print('v = '+str(player.V))
+    #print('x = '+str(player.pos[0]))
+    #print('y = '+str(player.pos[1]))
+    #print('z = '+str(player.pos[2]))
 
     data['p_acc'] = player.a
     data['p_vel'] = player.V
     data['p_pos'] = player.pos
     data['p_ang'] = player.angle
     data['p_fue'] = 100 # ADD THIS
-    data['p_thm'] = 100 # ADD THIS
+    data['p_thm'] = player.thm # ADD THIS
     data['p_sta'] = True # ADD THIS
     data['p_orb'] = False # ADD THIS
 
 
-def update_data(data):
+def update(player, data):
     global OBJECTS
     player.a = data['p_acc']
     player.V = data['p_vel']
     player.pos = data['p_pos']
-    player.angle = data['p_pos']
+    player.angle = data['p_ang']
+    player.thm = data['p_thm']
     #FUE, THM, STA, ORB
 
 
@@ -194,11 +197,11 @@ def update_data(data):
 # STA Grav 2
 # STA 
 
-Player = setup()
-print('ok')
-for object in OBJECTS:
-    if object[1] == 'planet':
-        for i in range(100):
-            print(i)
-            run(object[0], Player, 1)
+#Player = setup()
+#print('ok')
+#for object in OBJECTS:
+#    if object[1] == 'planet':
+#        for i in range(100):
+#            print(i)
+#            run(object[0], Player, 1)
             

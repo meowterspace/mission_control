@@ -23,6 +23,16 @@
 					width: 400px;
 					height: 600px;
 				}
+				#win-thm {
+					width: 150px;
+					height: 150px;
+					text-align: center;
+				}
+				#win-ang {
+					width: 165px;
+					height: 310px;
+					text-align: center;
+				}
 				#win-FDAI {
 					width: 400px;
 					height: 400px;
@@ -38,6 +48,20 @@
 					height: 100%;
 					
 				}
+				td{
+  					text-align: center;
+				}
+
+				input{
+					text-align: left;
+				}
+
+				#up{
+ 					width: 20px;
+  					height: 20px;
+  					background-color: #fffdd0;
+				}
+
 
 		</style>
 		
@@ -46,6 +70,62 @@
 		</script>
 
 		<script>
+
+		var latest_data = null;
+
+
+		// ============== EDIT STUFF ===============
+		var update = io.connect('http://127.0.0.1:5000/update');
+
+		function make(id, value, dp){ // List of IDs for values, value, decimal point position in array
+			value = Math.round(value*100)/100;
+			console.log(value);
+			value = value.toString();
+			value = value.split('');
+			if (value.length < id.length ){value.unshift('0');};
+			if (value[dp] == null){ value[dp] = '.';} ;
+			for (var i=0; i<id.length; i++){
+				if (value[i] == null){ value[i] = '0'; };
+
+				document.getElementById(id[i]).innerHTML = value[i];
+			};
+		};
+
+		
+
+		function change(type, power, direction){
+  			console.log(value, power, direction);
+  			switch(type){
+  				case 'thm':
+  					var value = latest_data.p_thm;
+  					value = value + (1*power*direction);
+  					make(['thm1', 'thm2', 'thm3', 'thm4'], value, 2); 
+  					latest_data.p_thm = Math.round(value*100)/100;
+  					break;
+  				case 'angy':
+  					var value = latest_data.p_ang[0];
+  					value = value + (1*power*direction);
+  					make(['angy1', 'angy2', 'angy3', 'angy4', 'angy5', 'angy6'], value, 3);
+  					latest_data.p_ang[0] = Math.round(value*100)/100;
+  					break;
+  				case 'angp':
+  					var value = latest_data.p_ang[1];
+  					value = value + (1*power*direction);
+  					make(['angp1', 'angp2', 'angp3', 'angp4', 'angp5', 'angp6'], value, 3);
+  					latest_data.p_ang[1] = Math.round(value*100)/100;
+  					break;
+  				case 'angr':
+  					var value = latest_data.p_ang[2];
+  					value = value + (1*power*direction);
+  					make(['angr1', 'angr2', 'angr3', 'angr4', 'angr5', 'angyr'], value, 3);
+  					latest_data.p_ang[2] = Math.round(value*100)/100;
+  					break;
+  			}; 
+  			  	// UPDATE PAGE DATA HERE
+  			
+  			update.send(latest_data);
+		};
+
 
 
 		/* This makes #winx draggable only by handle(class .handle)
@@ -96,13 +176,14 @@
 $(document).ready(function() {
   var socket = io.connect('http://127.0.0.1:5000');
   
+  
   socket.on('connect', function() {
     socket.send('User has connected!');
   });
   
   socket.on('message', function(msg) {
   	
-  	// UPDATE PAGE DATA HERE
+  	latest_data = msg;
 
   	//document.getElementById('time').innerHTML = 'Time ('+msg.zone+'): '+msg.time;
   	var readout; 
@@ -128,7 +209,7 @@ $(document).ready(function() {
     	cube.rotation.x = msg.angle[0];
     };
     socket.send(msg.uuid);
-    console.log(msg);
+    
   });
  
 });
@@ -142,7 +223,8 @@ $(document).ready(function() {
 					<ul class="dropdown-menu">
 						<li><a href="javascript:showModal('win1')">T1</a></li>
 						<li><a href="javascript:showModal('win-fdai')">FDAI</a></li>
-						<li><a href="#">T3</a></li>
+						<li><a href="javascript:showModal('win-thm')">Thrust Multiplier</a></li>
+						<li><a href="javascript:showModal('win-ang')">Angle Control</a></li>
 					</ul>
 				</li>
 			</ul>
@@ -170,4 +252,138 @@ $(document).ready(function() {
 		</div>
 		<div class="panel-body"><div id='canvas'></div></div>
 	</div>
+
+<!-- ================= THM ================= -->
+
+	<div id="win-thm" class="col-3 panel panel-default">
+		<div class="handle panel-heading">Thrust Multiplier
+			<button type="button" class="close" aria-label="Close" onclick="hideModal('win-thm')">
+			<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+		<div class="panel-body">
+			Current Thrust: 
+  			<table>
+   				<tr>
+      				<td><input type='button' onclick="change('thm', 10, 1)" id='up' value='▲'></td>
+      				<td><input type='button' onclick="change('thm', 1, 1)" id='up' value='▲'></td>
+      				<td><input type='button' id='up'></td>
+      				<td><input type='button' onclick="change('thm', 0.1, 1)" id='up' value='▲'></td>
+    			</tr>
+    			<tr id='text'>
+      				<td id='thm1'>0</td>
+     				<td id='thm2'>0</td>
+      				<td id='thm3'>.</td>
+      				<td id='thm4'>0</td>
+      				<td>%</td>
+    			</tr>
+    			<tr>
+      				<td><input type='button' onclick="change('thm', 10, -1)" id='up' value='▼'></td>
+      				<td><input type='button' onclick="change('thm', 1, -1)" id='up' value='▼'></td>
+      				<td><input type='button' id='up'></td>
+      				<td><input type='button' onclick="change('thm', 0.1, -1)" id='up' value='▼'></td>
+    			</tr>
+  			</table>
+		</div>
+	</div>
+
+<!-- ================= ANGLE ================= -->
+	<div id="win-ang" class="col-3 panel panel-default">
+		<div class="handle panel-heading">Rocket Angle
+			<button type="button" class="close" aria-label="Close" onclick="hideModal('win-ang')">
+			<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+		<div class="panel-body">
+			Yaw:
+  			<table>
+   				<tr>
+      				<td><input type='button' onclick="change('angy', 100, 1)" id='up' value='▲'></td>
+      				<td><input type='button' onclick="change('angy', 10, 1)" id='up' value='▲'></td>
+      				<td><input type='button' onclick="change('angy', 1, 1)" id='up' value='▲'></td>
+      				<td><input type='button' id='up'></td>
+      				<td><input type='button' onclick="change('angy', 0.1, 1)" id='up' value='▲'></td>
+      				<td><input type='button' onclick="change('angy', 0.01, 1)" id='up' value='▲'></td>
+    			</tr>
+    			<tr id='text'>
+      				<td id='angy1'>0</td>
+     				<td id='angy2'>0</td>
+      				<td id='angy3'>0</td>
+      				<td id='angy4'>.</td>
+      				<td id='angy5'>0</td>
+      				<td id='angy6'>0</td>
+      				<td>°</td>
+    			</tr>
+    			<tr>
+      				<td><input type='button' onclick="change('angy', 100, -1)" id='up' value='▼'></td>
+      				<td><input type='button' onclick="change('angy', 10, -1)" id='up' value='▼'></td>
+      				<td><input type='button' onclick="change('angy', 1, -1)" id='up' value='▼'></td>
+      				<td><input type='button' id='up'></td>
+      				<td><input type='button' onclick="change('angy', 0.1, -1)" id='up' value='▼'></td>
+      				<td><input type='button' onclick="change('angy', 0.01, -1)" id='up' value='▼'></td>
+    			</tr>
+  			</table>
+  			Pitch:
+  		  	<table>
+   				<tr>
+      				<td><input type='button' onclick="change('angp', 100, 1)" id='up' value='▲'></td>
+      				<td><input type='button' onclick="change('angp', 10, 1)" id='up' value='▲'></td>
+      				<td><input type='button' onclick="change('angp', 1, 1)" id='up' value='▲'></td>
+      				<td><input type='button' id='up'></td>
+      				<td><input type='button' onclick="change('angp', 0.1, 1)" id='up' value='▲'></td>
+      				<td><input type='button' onclick="change('angp', 0.01, 1)" id='up' value='▲'></td>
+    			</tr>
+    			<tr id='text'>
+      				<td id='angp1'>0</td>
+     				<td id='angp2'>0</td>
+      				<td id='angp3'>0</td>
+      				<td id='angp4'>.</td>
+      				<td id='angp5'>0</td>
+      				<td id='angp6'>0</td>
+      				<td>°</td>
+    			</tr>
+    			<tr>
+      				<td><input type='button' onclick="change('angp', 100, -1)" id='up' value='▼'></td>
+      				<td><input type='button' onclick="change('angp', 10, -1)" id='up' value='▼'></td>
+      				<td><input type='button' onclick="change('angp', 1, -1)" id='up' value='▼'></td>
+      				<td><input type='button' id='up'></td>
+      				<td><input type='button' onclick="change('angp', 0.1, -1)" id='up' value='▼'></td>
+      				<td><input type='button' onclick="change('angp', 0.01, -1)" id='up' value='▼'></td>
+    			</tr>
+  			</table>
+  			Roll:
+  			<table>
+   				<tr>
+      				<td><input type='button' onclick="change('angr', 100, 1)" id='up' value='▲'></td>
+      				<td><input type='button' onclick="change('angr', 10, 1)" id='up' value='▲'></td>
+      				<td><input type='button' onclick="change('angr', 1, 1)" id='up' value='▲'></td>
+      				<td><input type='button' id='up'></td>
+      				<td><input type='button' onclick="change('angr', 0.1, 1)" id='up' value='▲'></td>
+      				<td><input type='button' onclick="change('angr', 0.01, 1)" id='up' value='▲'></td>
+    			</tr>
+    			<tr id='text'>
+      				<td id='angr1'>0</td>
+     				<td id='angr2'>0</td>
+      				<td id='angr3'>0</td>
+      				<td id='angr4'>.</td>
+      				<td id='angr5'>0</td>
+      				<td id='angr6'>0</td>
+      				<td>°</td>
+    			</tr>
+    			<tr>
+      				<td><input type='button' onclick="change('angr', 100, -1)" id='up' value='▼'></td>
+      				<td><input type='button' onclick="change('angr', 10, -1)" id='up' value='▼'></td>
+      				<td><input type='button' onclick="change('angr', 1, -1)" id='up' value='▼'></td>
+      				<td><input type='button' id='up'></td>
+      				<td><input type='button' onclick="change('angr', 0.1, -1)" id='up' value='▼'></td>
+      				<td><input type='button' onclick="change('angr', 0.01, -1)" id='up' value='▼'></td>
+    			</tr>
+  			</table>
+		</div>
+	</div>
 </body>
+
+
+
+
+ 
