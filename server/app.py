@@ -1,6 +1,7 @@
 import json
 import uuid
 import datetime
+import time
 import os
 import io
 import errno
@@ -182,12 +183,7 @@ def route(path):
 
 @socketio.on('message')
 def handle_message(message):
-  for i in resources.OBJECTS:
-    if (i[1] == 'planet'):
-      resources.run(i[0], player, 0.1)
 
-  #if message != str(meta['uuid']): #print(message)
-  #  print('Packet Loss!')
 
   meta['time'] = str(datetime.datetime.now())
   meta['serv'] = str(datetime.datetime.now()-start)
@@ -200,7 +196,6 @@ def handle_message(message):
 
 @socketio.on('message', namespace='/update')
 def handle_incoming_data(message):
-  send(resources.data)
   print('Incoming Data: '+str(message))
   resources.update(player, message)
   print(resources.data)
@@ -210,5 +205,16 @@ def handle_incoming_data(message):
 def handle_lobby_message(message):
   send(GAME)
 
+#================== THREADS ==============================
+
+def compute(time):
+  while True:
+    for i in resources.OBJECTS:
+      if (i[1] == 'planet'): resources.run(i[0], player, time)
+    time.sleep(time)
+
+
 if __name__ == '__main__':
+  compute_thread = Thread(target=compute, args=(0.1))
+  compute_thread.start()
   socketio.run(app)
