@@ -101,11 +101,15 @@ class Rocket(GameObject):
                                                               
         return F  # Ae = area of exit
 
-    def drag_area():
-        return 1 # fuuuuuck
+    def drag_area(V, a, r, h):
+        area = r*h
+        top = np.arcos((V[0]*a[0]+V[1]*a[1]+V[2]*a[2]))
+        bottom = ((np.sqrt((a[0]**2)+(a[1]**2)+(a[1]**2)))*np.sqrt((V[0]**2)+(V[1]**2)+(V[1]**2)))
+        area = area * (top/bottom)
+        return area
 
     def drag(planet, T, h):  # P = Pressure /PA, T = temp(k), Vg = velocity
-        F = 0.5 * ((planet.pressure(T, h) / (286 * T)) * (self.V ** 2) * self.Cd * self.drag_area())  # Cd = Coefficient of drag, A = area in drag
+        F = 0.5 * ((planet.pressure(T, h) / (286 * T)) * (self.V ** 2) * self.Cd * self.drag_area(self.V, self.a, self.radius, self.length))  # Cd = Coefficient of drag, A = area in drag
         return F
 
     def die():
@@ -122,7 +126,7 @@ class Rocket(GameObject):
 def make_planet(Planet, name, mass, radius, pos, V, a, p0, molMass):
     exec(str(name)+' = Planet('+str(mass)+','+str(radius)+','+str(pos)+','+str(V)+','+str(a)+','+'p0'+','+str(molMass)+')')
     exec('OBJECTS.append( ['+str(name)+', "planet"] )')
-
+    
 
 # funct:
 def setup():
