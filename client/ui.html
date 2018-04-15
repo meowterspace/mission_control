@@ -11,8 +11,10 @@
 		<!-- INCLUDE THE BOOTSTRAP LIBRARIES VIA CDN -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script> 
 		<script src="resources/js/three.min.js"></script>
 		<script src='resources/js/navball.js'></script>
+		<script src='resources/js/graphing.js'></script>
 		<style type="text/css">
 				body {
 					background-color: #c4c4c4;
@@ -35,6 +37,11 @@
 				}
 				#win-FDAI {
 					width: 400px;
+					height: 400px;
+					margin: 0;
+				}
+				#win-graph {
+					width: 800px;
 					height: 400px;
 					margin: 0;
 				}
@@ -225,6 +232,7 @@ $(document).ready(function() {
 						<li><a href="javascript:showModal('win-fdai')">FDAI</a></li>
 						<li><a href="javascript:showModal('win-thm')">Thrust Multiplier</a></li>
 						<li><a href="javascript:showModal('win-ang')">Angle Control</a></li>
+						<li><a href="javascript:showModal('win-graph')">Graph</a></li>
 					</ul>
 				</li>
 			</ul>
@@ -383,6 +391,21 @@ $(document).ready(function() {
 	</div>
 </body>
 
+<!-- ================= Graph ================= -->
+
+	<div id="win-graph" class="col-2 panel panel-danger">
+		<div class="handle panel-heading">GRAPH
+			<button type="button" class="close" aria-label="Close" onclick="hideModal('win-graph')">
+			<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+		<div class="panel-body">
+			<div id="chartContainer" style="width:100%; height:300px"></div>  
+			<button id="addDataPoint">Add Data Point</button>  
+			<button id="updateDataPoint">Update Data Point</button>  
+
+		></div>
+	</div>
 
 
 

@@ -7,8 +7,16 @@ import io
 import errno
 from flask import Flask, render_template, send_file, request, session, redirect, render_template_string
 from flask_socketio import SocketIO, emit, send
-from threading import Thread
+from threading import Thread, Lock
 import resources
+import sys
+
+print(sys.argv)
+#ip = sys.argv[1]
+#port = sys.argv[2]
+
+
+
 
 header = '''
 <head>
@@ -29,11 +37,11 @@ $(document).ready(function() {
   });
 
   lobby.on('message', function(msg) {
-  	var user_table = '<table style="border: 1px solid #000000">';
-  	for (var i=1; i <= msg.USER_LIST.length; i++) {
-  		user_table = user_table + '<tr><td>'+msg.USER_LIST[i-1]+'</td></tr>';
-  	}
-  	user_table = user_table + '</table>';
+    var user_table = '<table style="border: 1px solid #000000">';
+    for (var i=1; i <= msg.USER_LIST.length; i++) {
+      user_table = user_table + '<tr><td>'+msg.USER_LIST[i-1]+'</td></tr>';
+    }
+    user_table = user_table + '</table>';
     document.getElementById('party').innerHTML = user_table;
     lobby.send('hi');
   });
@@ -131,7 +139,7 @@ start = datetime.datetime.now()
 
 #================== RUN =================================
 player = resources.setup()
-
+lastest_pute = resources.data
 #================== APP ROUTES - FLASK =================================
 
 @app.route('/')
@@ -180,10 +188,10 @@ def route(path):
 
 #================== APP ROUTES - SOCKETIO ==============================
 
+lock = Lock()
 
 @socketio.on('message')
 def handle_message(message):
-
 
   meta['time'] = str(datetime.datetime.now())
   meta['serv'] = str(datetime.datetime.now()-start)
@@ -191,7 +199,11 @@ def handle_message(message):
 
   to_send = {}
   to_send.update(meta)
-  to_send.update(resources.data)
+  to_send.update(resources.data) # GET DATA OUT OF THIS??????
+
+  with lock:
+    print(resources.data)
+
   send(to_send)
 
 @socketio.on('message', namespace='/update')
@@ -211,6 +223,8 @@ def compute(time):
   while True:
     for i in resources.OBJECTS:
       if (i[1] == 'planet'): resources.run(i[0], player, time)
+      global lastest_pute
+      lastest_pute = resources.data
     time.sleep(time)
 
 

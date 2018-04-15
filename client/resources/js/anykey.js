@@ -20,5 +20,5 @@ function host() {
 	alert('host');
 };
 function about() {
-	alert('host');
+	alert('about');
 };
