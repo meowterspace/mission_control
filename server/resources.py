@@ -23,7 +23,19 @@ class GameObject():
         self.mass, self.radius = mass, radius    # every gameObject.
         self.pos, self.V, self.a = pos, V, a
 
-# This function calculates the scalar distance between two objects in the game
+    # This function checks if an object is in orbit of another object.
+    def is_orbit(v, r, m, h):
+        y = (v[0]*v[1]+v[1]*r[1]+v[2]+r[2])
+        y = y / (np.sqrt((v[0]**2)+(v[1]**2)+(v[2]**2))+np.sqrt((r[0]**2)+(r[1]**2)+(r[2]**2)))
+
+        v = np.sqrt((v[0]**2)+(v[1]**2)+(v[2]**2))
+        r = np.sqrt((r[0]**2)+(r[1]**2)+(r[2]**2))
+    
+        p = ((6.67408e-11*m - np.sqrt((6.67408e-11**2)*(m**2)-(v**2)*(r**2)*(((2*6.67408e-11*m)/r)-(v**2))*(1-(np.cos(y))**2)))/(2*6.67408e-11*m-(v**2))) * r
+        print(p)
+        if (p > h): return True
+            else: return False
+    # This function calculates the scalar distance between two objects in the game
     def distance(self, obj):
         d = [None, None, None]
         d[0] = self.pos[0]-obj.pos[0]
