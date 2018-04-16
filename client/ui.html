@@ -73,55 +73,60 @@
 		</style>
 		
 		<script>
-			var FDAI_rendered = 0;
+			var FDAI_rendered = 0; // marker to show if the FDAI has been rendered
 		</script>
 
 		<script>
 
-		var latest_data = null;
+		var latest_data = null; // Latest data recieved by websockets
 
 
 		// ============== EDIT STUFF ===============
-		var update = io.connect('http://127.0.0.1:5000/update');
+		var update = io.connect('http://127.0.0.1:5000/update'); // connect to /update websocket channel
 
+		/* The function below is used to display a value on a Numerical Value Editor.
+		   it takes the id's it needs to edit in the document, the value it want's to display
+		   and the position in the value of the decimal point. */
 		function make(id, value, dp){ // List of IDs for values, value, decimal point position in array
-			value = Math.round(value*100)/100;
+			value = Math.round(value*100)/100; // round the value to 2dp
 			console.log(value);
 			value = value.toString();
-			value = value.split('');
+			value = value.split(''); // split each character into a new element in the array
 			if (value.length < id.length ){value.unshift('0');};
-			if (value[dp] == null){ value[dp] = '.';} ;
-			for (var i=0; i<id.length; i++){
+			if (value[dp] == null){ value[dp] = '.';} ; // This section just makes sure nothing is 
+			for (var i=0; i<id.length; i++){            // null and will fix it if it is.
 				if (value[i] == null){ value[i] = '0'; };
 
-				document.getElementById(id[i]).innerHTML = value[i];
+				document.getElementById(id[i]).innerHTML = value[i]; // add each value to each ID in document
 			};
 		};
 
 		
-
+		/* This function is used to change the value on a Numerical Value Editor. It takes the type of NVE,
+		   the power of the unit it should change and the direction (positive or negative). It then calculates
+		   the new value, updates latest_data and calles the make function above to display the new value */
 		function change(type, power, direction){
   			console.log(value, power, direction);
   			switch(type){
-  				case 'thm':
+  				case 'thm': // The cases represent different NVEs on the screen. This is for the Thrust Modifier
   					var value = latest_data.p_thm;
   					value = value + (1*power*direction);
   					make(['thm1', 'thm2', 'thm3', 'thm4'], value, 2); 
   					latest_data.p_thm = Math.round(value*100)/100;
   					break;
-  				case 'angy':
+  				case 'angy': // The yaw angle
   					var value = latest_data.p_ang[0];
-  					value = value + (1*power*direction);
-  					make(['angy1', 'angy2', 'angy3', 'angy4', 'angy5', 'angy6'], value, 3);
-  					latest_data.p_ang[0] = Math.round(value*100)/100;
+  					value = value + (1*power*direction); // change value to match new data that user selected.
+  					make(['angy1', 'angy2', 'angy3', 'angy4', 'angy5', 'angy6'], value, 3); // update display
+  					latest_data.p_ang[0] = Math.round(value*100)/100; // update latest_data
   					break;
-  				case 'angp':
+  				case 'angp': // The Pitch angle
   					var value = latest_data.p_ang[1];
   					value = value + (1*power*direction);
   					make(['angp1', 'angp2', 'angp3', 'angp4', 'angp5', 'angp6'], value, 3);
   					latest_data.p_ang[1] = Math.round(value*100)/100;
   					break;
-  				case 'angr':
+  				case 'angr': // The Roll angle
   					var value = latest_data.p_ang[2];
   					value = value + (1*power*direction);
   					make(['angr1', 'angr2', 'angr3', 'angr4', 'angr5', 'angyr'], value, 3);
@@ -130,7 +135,7 @@
   			}; 
   			  	// UPDATE PAGE DATA HERE
   			
-  			update.send(latest_data);
+  			update.send(latest_data); // send the newly updated data(latest_data) to the server on the /update namespace.
 		};
 
 
@@ -181,21 +186,22 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-  var socket = io.connect('http://127.0.0.1:5000');
+  var socket = io.connect('http://127.0.0.1:5000'); // connect to main websocket channel
   
   
-  socket.on('connect', function() {
+  socket.on('connect', function() { // when it connects to server, send a message to get the data flow going
     socket.send('User has connected!');
   });
   
-  socket.on('message', function(msg) {
+  socket.on('message', function(msg) { // when client recieves a message
   	
-  	latest_data = msg;
+  	latest_data = msg; // store the message as latest_data
 
-  	//document.getElementById('time').innerHTML = 'Time ('+msg.zone+'): '+msg.time;
-  	var readout; 
+  	var readout;  // This prints out all the data in the message to T1 in the navbar for debug purposes
+  				  // or just to look at all the variables at once to get a more comprehensive view of the
+  				  // simulation.
   	document.getElementById('serv').innerHTML = msg.serv;
-  	readout = readout + '<p>p_acc: '+String(msg.p_acc)+'</p>';
+  	readout = readout + '<p>p_acc: '+String(msg.p_acc)+'</p>'; 
   	readout = readout + '<p>p_ang: '+String(msg.p_ang)+'</p>';
   	readout = readout + '<p>p_fue: '+String(msg.p_fue)+'</p>';
   	readout = readout + '<p>p_orb: '+String(msg.p_orb)+'</p>';
@@ -209,6 +215,8 @@ $(document).ready(function() {
   	readout = readout + '<p>zone: '+String(msg.zone)+'</p>';
 	document.getElementById('readout').innerHTML = readout;
 
+	// This checks if the FDAI (navball) has been rendered. If it has it will update it's angle/rotation
+	// to match the simulations angle.
   	document.getElementById('serv').innerHTML = msg.serv;
   	if (FDAI_rendered == 1) {
   		FDAI_rendered = FDAI_rendered + 1;

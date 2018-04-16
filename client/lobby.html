@@ -6,28 +6,31 @@
 <body>
 <script type="text/javascript">
 $(document).ready(function() {
-  var lobby = io.connect('http://127.0.0.1:5000/lobbu');
+  var lobby = io.connect('http://127.0.0.1:5000/lobbu'); // connect to websocket channel /lobbu
 
 
-  lobby.on('connect', function() {
-    lobby.send('hi');
+  lobby.on('connect', function() { // when the page connects to the websocket server:
+    lobby.send('hi'); // send a message 'hi'. This will start the back and forth communication
 
 
   });
 
-  lobby.on('message', function(msg) {
-  	if (String(msg.ACTIVE) == 'true') {
+  lobby.on('message', function(msg) { // When this recieves a message from /lobbu channel,
+  	if (String(msg.ACTIVE) == 'true') { // if the game is active, redirect to /ui.html
   		window.location.replace("http://127.0.0.1:5000/ui.html");
   	};
 
+    // The below prints out the websocket data in two tables. 
+    // This table is the people in the game
   	var user_table = '<table style="border: 1px solid #000000">';
   	for (var i=1; i <= msg.USER_LIST.length; i++) {
   		user_table = user_table + '<tr><td>'+msg.USER_LIST[i-1]+'</td></tr>';
   	};
   	user_table = user_table + '</table>';
+    // Add table to document
     document.getElementById('party').innerHTML = user_table;
     lobby.send('hi');
-
+    // This table is the current game settings
     var settings_table = `<table style="border: 1px solid #000000">
     <tr><td>Game Name</td><td>`+String(msg.GAME_NAME)+`</td></tr>
     <tr><td>Description</td><td>`+String(msg.DESCRIPTION)+`</td></tr>
@@ -41,7 +44,7 @@ $(document).ready(function() {
 
     `;
 
-
+    // Add table to document
     document.getElementById('settings').innerHTML = settings_table;
   });
 });
